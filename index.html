@@ -138,8 +138,8 @@
 
 <body>
 
-<!-- 🎵 MUSIC (UPDATED FILE NAME) -->
-<audio id="bgMusic" loop>
+<!-- 🎵 AUDIO (MOBILE-SAFE) -->
+<audio id="bgMusic" preload="auto" playsinline>
   <source src="nanna_movie_vikram.mp3" type="audio/mpeg">
 </audio>
 
@@ -187,6 +187,18 @@ function showMessage() {
     typeChar();
   }
   nextLine();
+}
+
+/* 🔊 GUARANTEED AUDIO UNLOCK */
+function playMusicSafely() {
+  music.muted = true;
+  music.play().then(() => {
+    music.pause();
+    music.currentTime = 0;
+    music.muted = false;
+    music.volume = 0.6;
+    music.play();
+  }).catch(() => {});
 }
 
 function launchFirework() {
@@ -242,9 +254,7 @@ function openCard() {
   if (opened) return;
   opened = true;
 
-  music.volume = 0.6;
-  music.play().catch(()=>{});
-
+  playMusicSafely();
   poppers();
   setInterval(createFalling, 350);
 
