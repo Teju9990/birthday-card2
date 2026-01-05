@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy Birthday 🎉</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to bottom, #cce7ff, #f5fbff); /* 💙 BLUE BACKGROUND */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* 🎁 OPEN CARD */
+  .card {
+    width: 260px;
+    height: 170px;
+    background: #2b7de9; /* blue */
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    cursor: pointer;
+    z-index: 3;
+    text-align: center;
+    padding: 20px;
+  }
+
+  @keyframes pulse {
+    50% { transform: scale(1.05); }
+  }
+
+  /* 💌 MESSAGE CARD */
+  .message {
+    display: none;
+    background: white;
+    width: 90%;
+    max-width: 380px;
+    height: 320px;
+    padding: 16px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    color: #0a2540;
+    z-index: 3;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  h1 {
+    color: #2b7de9;
+    text-align: center;
+    font-size: 1.4rem;
+    margin: 4px 0;
+  }
+
+  .cake-symbol {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+
+  /* 📜 SCROLLING MESSAGE AREA */
+  #textMessage {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  #textMessage p {
+    margin-bottom: 12px;
+  }
+
+  /* 🎆 FIREWORK PARTICLES */
+  .firework {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: firework 1.4s ease-out forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes firework {
+    to {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
+  }
+
+  /* 🎊 CONFETTI */
+  .confetti {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    top: 50%;
+    left: 50%;
+    animation: confettiFall 1.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes confettiFall {
+    to {
+      transform: translate(var(--x), var(--y)) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* ❤️ HEARTS & FLOWERS */
+  .falling {
+    position: fixed;
+    top: -40px;
+    font-size: 20px;
+    animation: fall linear forwards;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110dvh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .message { height: 300px; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 🎁 OPEN CARD -->
+<div class="card" id="openCard" onclick="openCard()">🎁 Tap to Open 🎉</div>
+
+<!-- 💌 MESSAGE CARD -->
+<div class="message" id="message">
+  <h1>Happy Birthday Nitya 💙</h1>
+  <div class="cake-symbol">🎂</div>
+  <div id="textMessage"></div>
+</div>
+
+<script>
+let opened = false;
+const music = document.getElementById("bgMusic");
+
+/* ⏳ Typing speed */
+const TYPE_SPEED = 55;
+const LINE_DELAY = 1200;
+
+/* 💬 NEW MESSAGE */
+const lines = [
+  "Happy Birthday to my favorite person 💖",
+  "You’re not just my best friend, you’re my family, my comfort, and the one place where my heart always feels safe. Thank you for being my constant—through my highs, my lows, my silence, and my chaos. You’ve seen every side of me and still chose to stay, and that means more to me than you’ll ever know.",
+  "Please never change. Stay the same beautiful soul with a childlike heart, the pure kindness you show without effort, and the warmth that makes everyone around you feel at home.",
+  "I treasure the little things most—our random conversations, shared smiles, inside jokes no one else would understand, our late-night rides, and those quiet moments where time seems to pause and everything feels right.",
+  "I wish you a year filled with gentle happiness, growth that makes you proud, love that feels safe and true, and dreams that slowly, beautifully come to life 🌷✨"
+];
+
+/* ✍️ TYPE + AUTO SCROLL */
+function showMessage() {
+  const box = document.getElementById("textMessage");
+  let i = 0;
+
+  function nextLine() {
+    if (i >= lines.length) return;
+    const p = document.createElement("p");
+    box.appendChild(p);
+    let j = 0;
+
+    function typeChar() {
+      if (j < lines[i].length) {
+        p.textContent += lines[i][j++];
+        box.scrollTop = box.scrollHeight;
+        setTimeout(typeChar, TYPE_SPEED);
+      } else {
+        i++;
+        setTimeout(nextLine, LINE_DELAY);
+      }
+    }
+    typeChar();
+  }
+  nextLine();
+}
+
+/* 🎆 FIREWORK */
+function launchFirework() {
+  const colors = ["#2b7de9","#7fbfff","#ffffff","#a6d8ff"];
+  const cx = Math.random() * window.innerWidth;
+  const cy = Math.random() * window.innerHeight;
+
+  for (let i = 0; i < 36; i++) {
+    const angle = (i / 36) * Math.PI * 2;
+    const f = document.createElement("div");
+    f.className = "firework";
+    f.style.background = colors[Math.floor(Math.random()*colors.length)];
+    f.style.left = cx + "px";
+    f.style.top = cy + "px";
+    f.style.setProperty("--dx", Math.cos(angle)*180 + "px");
+    f.style.setProperty("--dy", Math.sin(angle)*180 + "px");
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1500);
+  }
+}
+
+/* 🔁 CONTINUOUS RANDOM FIREWORKS */
+function fireworkLoop() {
+  if (opened && Math.random() < 0.035) {
+    launchFirework();
+  }
+  requestAnimationFrame(fireworkLoop);
+}
+
+/* 🎊 CONFETTI */
+function poppers() {
+  const colors = ["#2b7de9","#7fbfff","#a6d8ff","#ffffff"];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.setProperty("--x", (Math.random()*400-200)+"px");
+    c.style.setProperty("--y", (Math.random()*400-200)+"px");
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
+/* ❤️ HEARTS & FLOWERS */
+function createFalling() {
+  const emojis = ["💙","💖","🌸","🌷","✨"];
+  const el = document.createElement("div");
+  el.className = "falling";
+  el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  el.style.left = Math.random()*100 + "vw";
+  el.style.animationDuration = (4 + Math.random()*3) + "s";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),7000);
+}
+
+/* 🎉 OPEN CARD */
+function openCard() {
+  if (opened) return;
+  opened = true;
+
+  music.volume = 0.6;
+  music.play().catch(()=>{});
+
+  poppers();
+  setInterval(createFalling, 350);
+
+  document.getElementById("openCard").style.display = "none";
+  document.getElementById("message").style.display = "flex";
+
+  showMessage();
+}
+
+/* start fireworks */
+fireworkLoop();
+</script>
+
+</body>
+</html>
